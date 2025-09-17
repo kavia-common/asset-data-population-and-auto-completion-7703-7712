@@ -12,17 +12,19 @@ function SimpleSelect({
   disabled = false,
   placeholder = '-- Select --',
   id,
+  className = '',
 }) {
   /** This is a simple select builder for lookup options. */
   return (
     <select
       id={id}
-      className="form-select asset-form-select"
+      className={`form-select ${className}`}
       value={value}
       onChange={onChange}
       disabled={disabled}
+      aria-describedby={id ? `${id}-desc` : undefined}
     >
-      <option value="">{placeholder}</option>
+      {placeholder ? <option value="">{placeholder}</option> : null}
       {options.map((opt) => (
         <option key={opt.lookupValue} value={opt.lookupValue}>
           {opt.lookupDescription || opt.lookupValue}
@@ -43,154 +45,148 @@ export const FIELDS = {
 // PUBLIC_INTERFACE
 export default function New() {
   /**
-   * Render "Asset Devices" dynamically from ASSET_DEVICES lookup:
-   * - Each device has an Enabled toggle
-   * - Left card: Status
-   * - Right card: Antenna Mfg, Model filtered by manufacturer
+   * This component renders ASSET DEVICES dynamically based on lookUpData.
+   * Updated to match assets/new_asset_devices_design_notes.md pixel-accurate spec:
+   * - Card border 1px #e6e6e6, radius 2px, padding 12-16px
+   * - Two-column grid with 24px column gap, 12px row gap
+   * - Labels 12px/16px semibold, 4px spacing to control
+   * - Controls 28px height, 1px border, 2px radius
+   * - Field order: Status, Antenna Manufacturer, Antenna Model
    */
-  // Inject the provided lookUpData JSON here as the single source of truth.
-  // Replace [...] with the actual JSON injected by the orchestrator for runtime.
   const lookUpData = useMemo(
     () => [
-      { "lookupSetName": "ASSET_STATUSES", "values": [ { "id": 4, "lookupValue": "Installed", "lookupDescription": "Installed", "parentLookupValue": null, "lookupOrder": 2 }, { "id": 5, "lookupValue": "Obsolete", "lookupDescription": "Obsolete", "parentLookupValue": null, "lookupOrder": 3 }, { "id": 9588, "lookupValue": "TESTU", "lookupDescription": "84A212951WMP1", "parentLookupValue": null, "lookupOrder": 2 }, { "id": 3, "lookupValue": "To Be Installed", "lookupDescription": "To Be Installed", "parentLookupValue": null, "lookupOrder": 1 } ] },
-      { "lookupSetName": "ANTENNA_MANUFACTURERS", "values": [ { "id": 5200, "lookupValue": "CTI", "lookupDescription": "CTI", "parentLookupValue": null, "lookupOrder": 6 }, { "id": 5060, "lookupValue": "General Electric", "lookupDescription": "General Electric", "parentLookupValue": null, "lookupOrder": 2 }, { "id": 9193, "lookupValue": "Generic", "lookupDescription": "Generic", "parentLookupValue": null, "lookupOrder": 7 }, { "id": 1153, "lookupValue": "No Antenna", "lookupDescription": "No Antenna", "parentLookupValue": null, "lookupOrder": 3 }, { "id": 5162, "lookupValue": "Sierra Wireless", "lookupDescription": "Sierra Wireless", "parentLookupValue": null, "lookupOrder": 5 }, { "id": 5000, "lookupValue": "Wired Matrix", "lookupDescription": "WiredMatrix", "parentLookupValue": null, "lookupOrder": 4 }, { "id": 34, "lookupValue": "Wireless Matrix", "lookupDescription": "Wireless Matrix", "parentLookupValue": null, "lookupOrder": 1 } ] },
-      { "lookupSetName": "ANTENNA_MODELS", "values": [ { "id": 5202, "lookupValue": "GE PTC", "lookupDescription": "GE PTC", "parentLookupValue": 5060, "lookupOrder": 6 }, { "id": 1168, "lookupValue": "MARX-C1", "lookupDescription": "MARX-C1", "parentLookupValue": 5060, "lookupOrder": 3 }, { "id": 35, "lookupValue": "MBS2-LPR", "lookupDescription": "MBS2-LPR", "parentLookupValue": 34, "lookupOrder": 1 }, { "id": 5201, "lookupValue": "REX", "lookupDescription": "REX", "parentLookupValue": 5200, "lookupOrder": 5 }, { "id": 6340, "lookupValue": "REX-OBN", "lookupDescription": "REX with Mobile IP", "parentLookupValue": 5200, "lookupOrder": 8 }, { "id": 5163, "lookupValue": "Raven-X", "lookupDescription": "Raven-X", "parentLookupValue": 5162, "lookupOrder": 4 }, { "id": 9194, "lookupValue": "Server Ping Antenna", "lookupDescription": "Server Ping Antena", "parentLookupValue": 9193, "lookupOrder": 7 }, { "id": 5061, "lookupValue": "WMP1", "lookupDescription": "84A212951WMP1", "parentLookupValue": 5060, "lookupOrder": 2 }, { "id": 9584, "lookupValue": "WMP20", "lookupDescription": "84A212951WMP1", "parentLookupValue": 5060, "lookupOrder": 2 } ] },
-      {
-        "lookupSetName": "ASSET_DEVICES",
-        "values": [
-            {
-                "id": 9082,
-                "lookupValue": "CMU",
-                "lookupDescription": "CMU",
-                "parentLookupValue": null,
-                "lookupOrder": 1
-            },
-            {
-                "id": 9084,
-                "lookupValue": "LCV",
-                "lookupDescription": "LOCOVISION",
-                "parentLookupValue": null,
-                "lookupOrder": 2
-            },
-            {
-                "id": 9083,
-                "lookupValue": "HPEAP",
-                "lookupDescription": "HPEAP",
-                "parentLookupValue": null,
-                "lookupOrder": 3
-            },
-            {
-                "id": 9373,
-                "lookupValue": "eHPLIG",
-                "lookupDescription": "eHPLIG",
-                "parentLookupValue": null,
-                "lookupOrder": 4
-            },
-            {
-                "id": 9516,
-                "lookupValue": "EM1900",
-                "lookupDescription": "EM1900",
-                "parentLookupValue": null,
-                "lookupOrder": 5
-            },
-            {
-                "id": 9379,
-                "lookupValue": "EMCard",
-                "lookupDescription": "EMCARD",
-                "parentLookupValue": null,
-                "lookupOrder": 6
-            },
-            {
-                "id": 9627,
-                "lookupValue": "Test",
-                "lookupDescription": "Test",
-                "parentLookupValue": null,
-                "lookupOrder": 7
-            }
-        ]
-    },
+      // Example inline data; in real runtime this is provided by orchestrator
+      { lookupSetName: 'ASSET_STATUSES', values: [
+        { id: 4, lookupValue: 'Installed', lookupDescription: 'Installed' },
+        { id: 5, lookupValue: 'Obsolete', lookupDescription: 'Obsolete' },
+        { id: 3, lookupValue: 'To Be Installed', lookupDescription: 'To Be Installed' },
+      ]},
+      { lookupSetName: 'ANTENNA_MANUFACTURERS', values: [
+        { id: 5200, lookupValue: 'CTI', lookupDescription: 'CTI' },
+        { id: 5060, lookupValue: 'General Electric', lookupDescription: 'General Electric' },
+        { id: 5162, lookupValue: 'Sierra Wireless', lookupDescription: 'Sierra Wireless' },
+      ]},
+      { lookupSetName: 'ANTENNA_MODELS', values: [
+        { id: 5202, lookupValue: 'GE PTC', lookupDescription: 'GE PTC', parentLookupValue: 5060 },
+        { id: 1168, lookupValue: 'MARX-C1', lookupDescription: 'MARX-C1', parentLookupValue: 5060 },
+        { id: 5163, lookupValue: 'Raven-X', lookupDescription: 'Raven-X', parentLookupValue: 5162 },
+      ]},
+      { lookupSetName: 'ASSET_DEVICES', values: [
+        { id: 9082, lookupValue: 'CMU' },
+        { id: 9084, lookupValue: 'LCV' },
+        { id: 9083, lookupValue: 'HPEAP' },
+      ]},
     ],
     []
   );
 
-  // Scoped style for the component (from design notes)
+  // Scoped styles reflecting assets/new_asset_devices_design_notes.md
   const style = `
   :root {
-    --color-bg-canvas: #FFFFFF;
-    --color-border-subtle: #E0E0E0;
-    --color-border-input: #C9C9C9;
-    --color-text-strong: #333333;
-    --color-text-default: #000000;
-    --color-accent-deep: #003366;
-    --color-focus: #2B6CB0;
+    --bg-canvas: #ffffff;
+    --bg-panel: #ffffff;
+    --text-strong: #333333;
+    --text-default: #4a4a4a;
+    --text-muted: #6b7280;
+    --border-default: #d6d6d6;
+    --border-subtle: #e6e6e6;
+    --border-hover: #bfbfbf;
+    --accent: #2f55a4;
+    --accent-rgb: 47, 85, 164;
   }
-  .asset-device-fieldset {
-    border: 1px solid var(--color-border-subtle);
-    border-radius: 6px;
-    padding: 12px 12px 16px 12px;
-    background: #fff;
+
+  .page-container {
+    max-width: 960px;
+    margin: 0 auto;
+    padding: 16px;
+    background: var(--bg-canvas);
+    font-family: "Helvetica Neue", Arial, sans-serif;
+  }
+
+  .device-fieldset {
+    border: 1px solid var(--border-subtle);
+    border-radius: 2px;
+    padding: 12px 16px;
     margin-bottom: 16px;
+    background: var(--bg-panel);
   }
-  .asset-device-legend {
+  .device-legend {
     padding: 0 6px;
     margin-left: 8px;
-    color: var(--color-accent-deep);
-    font: 600 13px/1.2 "Helvetica Neue", Arial, sans-serif;
+    color: var(--text-strong);
+    font: 600 13px/18px "Helvetica Neue", Arial, sans-serif;
   }
-  .asset-device-toggle {
+  .device-toggle {
     display: inline-flex;
-    gap: 8px;
     align-items: center;
-    color: var(--color-text-strong);
-    font: 600 13px/1.2 "Helvetica Neue", Arial, sans-serif;
+    gap: 8px;
+    color: var(--text-strong);
   }
-  .asset-devices-panel {
+
+  .device-grid {
     display: grid;
     grid-template-columns: 1fr 1fr;
-    gap: 24px;
-    background: var(--color-bg-canvas);
+    column-gap: 24px;
+    row-gap: 12px;
+    margin-top: 8px;
   }
-  .asset-card {
-    background: #fff;
-    border: 1px solid var(--color-border-subtle);
-    border-radius: 4px;
-    padding: 16px;
-  }
-  .asset-card-title {
-    margin: 0 0 12px 0;
-    font: 700 13px/1.2 "Helvetica Neue", Arial, sans-serif;
-    color: var(--color-accent-deep);
-  }
-  .asset-form-grid {
-    display: grid;
-    grid-template-columns: 160px 1fr;
-    column-gap: 8px;
-    row-gap: 10px;
-    align-items: center;
-  }
-  .asset-form-label {
-    text-align: right;
-    color: var(--color-text-strong);
-    font: 400 12px/1.2 "Helvetica Neue", Arial, sans-serif;
-  }
-  .asset-form-select {
-    height: 28px;
-    padding: 4px 8px;
-    border: 1px solid var(--color-border-input);
+
+  .card {
+    background: var(--bg-panel);
+    border: 1px solid var(--border-subtle);
     border-radius: 2px;
-    background: #fff;
-    color: var(--color-text-default);
-    font: 400 12px/1 "Helvetica Neue", Arial, sans-serif;
-    width: 100%;
-    max-width: 420px;
+    padding: 12px 16px;
   }
-  .asset-form-select:hover { border-color: #A8A8A8; }
-  .asset-form-select:focus { outline: 2px solid var(--color-focus); outline-offset: 0; }
-  .device-disabled { opacity: 0.6; }
-  @media (max-width: 768px) {
-    .asset-devices-panel { grid-template-columns: 1fr; gap: 16px; }
-    .asset-form-grid { grid-template-columns: 1fr; }
-    .asset-form-label { text-align: left; margin-bottom: 6px; }
+  .card-title {
+    font: 600 13px/18px "Helvetica Neue", Arial, sans-serif;
+    color: var(--text-strong);
+    margin: 0 0 8px 0;
+  }
+
+  .two-col-fields {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    column-gap: 24px;
+    row-gap: 12px;
+  }
+
+  .form-field {
+    display: flex;
+    flex-direction: column;
+  }
+  .form-field > label {
+    font: 600 12px/16px "Helvetica Neue", Arial, sans-serif;
+    color: var(--text-strong);
+    margin-bottom: 4px;
+  }
+  .input {
+    height: 28px;
+    border: 1px solid var(--border-default);
+    border-radius: 2px;
+    padding: 0 8px;
+    font: 400 12px/28px "Helvetica Neue", Arial, sans-serif;
+    color: var(--text-default);
+    background: #fff;
+    width: 100%;
+    min-width: 0;
+  }
+  .input:hover { border-color: var(--border-hover); }
+  .input:focus {
+    border-color: var(--accent);
+    outline: 2px solid rgba(var(--accent-rgb), 0.25);
+    outline-offset: 0;
+  }
+
+  .disabled-block {
+    opacity: 0.6;
+  }
+
+  @media (max-width: 991px) {
+    .device-grid { grid-template-columns: 1fr; }
+  }
+  @media (max-width: 600px) {
+    .card { padding: 10px; }
+    .two-col-fields { grid-template-columns: 1fr; column-gap: 0; row-gap: 10px; }
   }
   `;
 
@@ -291,10 +287,11 @@ export default function New() {
   }, [antennaModels, antennaMfgs]);
 
   return (
-    <div style={{ padding: 24 }}>
+    <div className="page-container">
       <style>{style}</style>
-      <h2>New Asset - Devices</h2>
-      <p>This section is rendered dynamically from the ASSET_DEVICES lookup set.</p>
+      <h2 style={{ fontFamily: '"Helvetica Neue", Arial, sans-serif', fontSize: 18, margin: '0 0 12px 0', color: 'var(--text-strong)' }}>
+        New Asset — Devices
+      </h2>
 
       {devicesLookup.length === 0 && (
         <div style={{ padding: '8px 0' }}>
@@ -310,9 +307,9 @@ export default function New() {
         const filteredModels = filteredModelsByDevice[deviceName] || [];
 
         return (
-          <fieldset key={deviceName} className="asset-device-fieldset">
-            <legend className="asset-device-legend">
-              <label className="asset-device-toggle">
+          <fieldset key={deviceName} className="device-fieldset">
+            <legend className="device-legend">
+              <label className="device-toggle">
                 <input
                   type="checkbox"
                   checked={enabled}
@@ -323,64 +320,64 @@ export default function New() {
               </label>
             </legend>
 
-            <div className={`asset-devices-panel ${enabled ? '' : 'device-disabled'}`}>
-              <article className="asset-card asset-devices">
-                <h3 className="asset-card-title">ASSET DEVICES</h3>
-                <div className="asset-form-grid">
-                  <label
-                    htmlFor={`${deviceName}-status`}
-                    className="asset-form-label"
-                  >
-                    Status:
-                  </label>
-                  <SimpleSelect
-                    id={`${deviceName}-status`}
-                    value={fields.status}
-                    onChange={onStatusChange(deviceName)}
-                    options={statusOptions}
-                    disabled={!enabled}
-                    placeholder="-- Select Status --"
-                  />
+            <section className={`device-grid ${enabled ? '' : 'disabled-block'}`}>
+              <article className="card">
+                <h3 className="card-title">Asset Devices</h3>
+                <div className="two-col-fields">
+                  <div className="form-field">
+                    <label htmlFor={`${deviceName}-status`}>Status</label>
+                    <SimpleSelect
+                      id={`${deviceName}-status`}
+                      value={fields.status}
+                      onChange={onStatusChange(deviceName)}
+                      options={statusOptions}
+                      disabled={!enabled}
+                      placeholder={''}
+                      className="input"
+                    />
+                  </div>
+                  <div className="form-field">
+                    <label htmlFor={`${deviceName}-antennaMfg`}>Antenna Manufacturer</label>
+                    <SimpleSelect
+                      id={`${deviceName}-antennaMfg`}
+                      value={fields.antennaMfg}
+                      onChange={onAntennaMfgChange(deviceName)}
+                      options={antennaMfgs}
+                      disabled={!enabled}
+                      placeholder={''}
+                      className="input"
+                    />
+                  </div>
+                  <div className="form-field">
+                    <label htmlFor={`${deviceName}-antennaModel`}>Antenna Model</label>
+                    <SimpleSelect
+                      id={`${deviceName}-antennaModel`}
+                      value={fields.antennaModel}
+                      onChange={onAntennaModelChange(deviceName)}
+                      options={filteredModels}
+                      disabled={!enabled || !fields.antennaMfg}
+                      placeholder={''}
+                      className="input"
+                    />
+                  </div>
+                  <div aria-hidden="true" />
                 </div>
               </article>
 
-              <article className="asset-card asset-registration">
-                <h3 className="asset-card-title">
-                  Asset Registration - Commissioning Information
-                </h3>
-                <div className="asset-form-grid">
-                  <label
-                    htmlFor={`${deviceName}-antennaMfg`}
-                    className="asset-form-label"
-                  >
-                    Antenna Mfg:
-                  </label>
-                  <SimpleSelect
-                    id={`${deviceName}-antennaMfg`}
-                    value={fields.antennaMfg}
-                    onChange={onAntennaMfgChange(deviceName)}
-                    options={antennaMfgs}
-                    disabled={!enabled}
-                    placeholder="-- Select Manufacturer --"
-                  />
-
-                  <label
-                    htmlFor={`${deviceName}-antennaModel`}
-                    className="asset-form-label"
-                  >
-                    Model:
-                  </label>
-                  <SimpleSelect
-                    id={`${deviceName}-antennaModel`}
-                    value={fields.antennaModel}
-                    onChange={onAntennaModelChange(deviceName)}
-                    options={filteredModels}
-                    disabled={!enabled || !fields.antennaMfg}
-                    placeholder="-- Select Model --"
-                  />
+              <article className="card">
+                <h3 className="card-title">Commissioning Information</h3>
+                <div className="two-col-fields">
+                  <div className="form-field">
+                    <label>Registered</label>
+                    <input className="input" type="text" disabled value="" />
+                  </div>
+                  <div className="form-field">
+                    <label>Commissioned</label>
+                    <input className="input" type="text" disabled value="" />
+                  </div>
                 </div>
               </article>
-            </div>
+            </section>
           </fieldset>
         );
       })}
