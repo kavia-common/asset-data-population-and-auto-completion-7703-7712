@@ -1,13 +1,10 @@
-import React, { createContext, useContext, useEffect, useMemo, useState } from 'react';
-
-// Minimal mock LookupDataContext to keep this example self-contained.
-// In your full app, import LookupDataContext from ../context/LookupDataContext and remove this.
-const LookupDataContext = createContext({ lookUpData: [] });
+import React, { useEffect, useMemo, useState } from 'react';
 
 /**
  * Simple Select component helper.
  * Expects options to be array of { lookupValue, lookupDescription?, id? }
  */
+// PUBLIC_INTERFACE
 function SimpleSelect({
   value,
   onChange,
@@ -16,6 +13,7 @@ function SimpleSelect({
   placeholder = '-- Select --',
   id,
 }) {
+  /** This is a simple select builder for lookup options. */
   return (
     <select
       id={id}
@@ -43,18 +41,29 @@ export const FIELDS = {
 };
 
 // PUBLIC_INTERFACE
-export function New() {
+export default function New() {
   /**
    * Render "Asset Devices" dynamically from ASSET_DEVICES lookup:
    * - Each device has an Enabled toggle
-   * - Styled as two cards side-by-side:
-   *    Left card: ASSET DEVICES (Status)
-   *    Right card: Asset Registration - Commissioning Information (Antenna Mfg, Model)
-   * - Styles match the provided design notes.
+   * - Left card: Status
+   * - Right card: Antenna Mfg, Model filtered by manufacturer
    */
-  const { lookUpData } = useContext(LookupDataContext);
+  // Inject the provided lookUpData JSON here as the single source of truth.
+  // Replace [...] with the actual JSON injected by the orchestrator for runtime.
+  const lookUpData = useMemo(
+    () => [
+      { "lookupSetName": "ASSET_STATUSES", "values": [ { "id": 4, "lookupValue": "Installed", "lookupDescription": "Installed", "parentLookupValue": null, "lookupOrder": 2 }, { "id": 5, "lookupValue": "Obsolete", "lookupDescription": "Obsolete", "parentLookupValue": null, "lookupOrder": 3 }, { "id": 9588, "lookupValue": "TESTU", "lookupDescription": "84A212951WMP1", "parentLookupValue": null, "lookupOrder": 2 }, { "id": 3, "lookupValue": "To Be Installed", "lookupDescription": "To Be Installed", "parentLookupValue": null, "lookupOrder": 1 } ] },
+      { "lookupSetName": "ANTENNA_MANUFACTURERS", "values": [ { "id": 5200, "lookupValue": "CTI", "lookupDescription": "CTI", "parentLookupValue": null, "lookupOrder": 6 }, { "id": 5060, "lookupValue": "General Electric", "lookupDescription": "General Electric", "parentLookupValue": null, "lookupOrder": 2 }, { "id": 9193, "lookupValue": "Generic", "lookupDescription": "Generic", "parentLookupValue": null, "lookupOrder": 7 }, { "id": 1153, "lookupValue": "No Antenna", "lookupDescription": "No Antenna", "parentLookupValue": null, "lookupOrder": 3 }, { "id": 5162, "lookupValue": "Sierra Wireless", "lookupDescription": "Sierra Wireless", "parentLookupValue": null, "lookupOrder": 5 }, { "id": 5000, "lookupValue": "Wired Matrix", "lookupDescription": "WiredMatrix", "parentLookupValue": null, "lookupOrder": 4 }, { "id": 34, "lookupValue": "Wireless Matrix", "lookupDescription": "Wireless Matrix", "parentLookupValue": null, "lookupOrder": 1 } ] },
+      { "lookupSetName": "ANTENNA_MODELS", "values": [ { "id": 5202, "lookupValue": "GE PTC", "lookupDescription": "GE PTC", "parentLookupValue": 5060, "lookupOrder": 6 }, { "id": 1168, "lookupValue": "MARX-C1", "lookupDescription": "MARX-C1", "parentLookupValue": 5060, "lookupOrder": 3 }, { "id": 35, "lookupValue": "MBS2-LPR", "lookupDescription": "MBS2-LPR", "parentLookupValue": 34, "lookupOrder": 1 }, { "id": 5201, "lookupValue": "REX", "lookupDescription": "REX", "parentLookupValue": 5200, "lookupOrder": 5 }, { "id": 6340, "lookupValue": "REX-OBN", "lookupDescription": "REX with Mobile IP", "parentLookupValue": 5200, "lookupOrder": 8 }, { "id": 5163, "lookupValue": "Raven-X", "lookupDescription": "Raven-X", "parentLookupValue": 5162, "lookupOrder": 4 }, { "id": 9194, "lookupValue": "Server Ping Antenna", "lookupDescription": "Server Ping Antena", "parentLookupValue": 9193, "lookupOrder": 7 }, { "id": 5061, "lookupValue": "WMP1", "lookupDescription": "84A212951WMP1", "parentLookupValue": 5060, "lookupOrder": 2 }, { "id": 9584, "lookupValue": "WMP20", "lookupDescription": "84A212951WMP1", "parentLookupValue": 5060, "lookupOrder": 2 } ] },
+      // If ASSET_DEVICES are part of the provided dataset, include them here.
+      // This component expects ASSET_DEVICES to exist in lookUpData.
+      // Example:
+      // { "lookupSetName": "ASSET_DEVICES", "values": [ { "id": 1, "lookupValue": "GPS" }, ... ] }
+    ],
+    []
+  );
 
-  // Scoped CSS compiled from assets/asset_devices_section_design_notes.md
+  // Scoped style for the component (from design notes)
   const style = `
   :root {
     --color-bg-canvas: #FFFFFF;
@@ -135,7 +144,6 @@ export function New() {
   }
   `;
 
-  // extract lookups by set name
   const getLookupValues = (setName) => {
     const set = lookUpData?.find((s) => s.lookupSetName === setName);
     return set?.values || [];
@@ -158,20 +166,15 @@ export function New() {
     [lookUpData]
   );
 
-  // Build the device list of names from lookup values
   const deviceNames = useMemo(
     () => devicesLookup.map((v) => v.lookupValue),
     [devicesLookup]
   );
 
-  // Enabled toggle state per device
   const [deviceEnabled, setDeviceEnabled] = useState({});
-  // Per-device fields: { [deviceName]: { status: string, antennaMfg: string, antennaModel: string } }
   const [deviceFields, setDeviceFields] = useState({});
-  // Per-device filtered antenna models based on selected antenna manufacturer
   const [filteredModelsByDevice, setFilteredModelsByDevice] = useState({});
 
-  // Initialize device fields when the lookup device list changes
   useEffect(() => {
     if (!deviceNames.length) return;
     setDeviceEnabled((prev) => {
@@ -190,7 +193,6 @@ export function New() {
     });
   }, [deviceNames]);
 
-  // When a device's antenna manufacturer changes, filter its models list
   const recalcFilteredModelsForDevice = (deviceName, selectedMfgValue) => {
     const mfgObj = antennaMfgs.find((m) => m.lookupValue === selectedMfgValue);
     const mfgId = mfgObj?.id;
@@ -230,7 +232,6 @@ export function New() {
     }));
   };
 
-  // Recompute filtered models when lookups change
   useEffect(() => {
     deviceNames.forEach((name) => {
       const mfg = deviceFields[name]?.antennaMfg || '';
@@ -241,9 +242,7 @@ export function New() {
 
   return (
     <div style={{ padding: 24 }}>
-      {/* Scoped style for this component */}
       <style>{style}</style>
-
       <h2>New Asset - Devices</h2>
       <p>This section is rendered dynamically from the ASSET_DEVICES lookup set.</p>
 
@@ -275,7 +274,6 @@ export function New() {
             </legend>
 
             <div className={`asset-devices-panel ${enabled ? '' : 'device-disabled'}`}>
-              {/* Left card: ASSET DEVICES (Status) */}
               <article className="asset-card asset-devices">
                 <h3 className="asset-card-title">ASSET DEVICES</h3>
                 <div className="asset-form-grid">
@@ -296,7 +294,6 @@ export function New() {
                 </div>
               </article>
 
-              {/* Right card: Registration/Commissioning (Antenna Mfg, Model) */}
               <article className="asset-card asset-registration">
                 <h3 className="asset-card-title">
                   Asset Registration - Commissioning Information
@@ -338,54 +335,5 @@ export function New() {
         );
       })}
     </div>
-  );
-}
-
-// Demo wrapper to provide sample lookUpData so the page works in this minimal template.
-const sampleLookupData = [
-  {
-    lookupSetName: 'ASSET_DEVICES',
-    values: [
-      { id: 1, lookupValue: 'GPS', lookupDescription: 'GPS' },
-      { id: 2, lookupValue: 'Modem', lookupDescription: 'Modem' },
-      { id: 3, lookupValue: 'WiFi', lookupDescription: 'WiFi' },
-    ],
-  },
-  {
-    lookupSetName: 'ASSET_STATUSES',
-    values: [
-      { id: 3, lookupValue: 'To Be Installed', lookupDescription: 'To Be Installed' },
-      { id: 4, lookupValue: 'Installed', lookupDescription: 'Installed' },
-      { id: 5, lookupValue: 'Obsolete', lookupDescription: 'Obsolete' },
-    ],
-  },
-  {
-    lookupSetName: 'ANTENNA_MANUFACTURERS',
-    values: [
-      { id: 34, lookupValue: 'Wireless Matrix', lookupDescription: 'Wireless Matrix' },
-      { id: 5060, lookupValue: 'General Electric', lookupDescription: 'General Electric' },
-      { id: 5200, lookupValue: 'CTI', lookupDescription: 'CTI' },
-    ],
-  },
-  {
-    lookupSetName: 'ANTENNA_MODELS',
-    values: [
-      { id: 35, lookupValue: 'MBS2-LPR', lookupDescription: 'MBS2-LPR', parentLookupValue: 34 },
-      { id: 1168, lookupValue: 'MARX-C1', lookupDescription: 'MARX-C1', parentLookupValue: 5060 },
-      { id: 5201, lookupValue: 'REX', lookupDescription: 'REX', parentLookupValue: 5200 },
-    ],
-  },
-];
-
-/**
- * Export a page-level component wired with a mock provider so the route renders in this template.
- * In the real app, you'd render <New /> within your actual LookupDataContext provider.
- */
-// PUBLIC_INTERFACE
-export default function NewPageWithProvider() {
-  return (
-    <LookupDataContext.Provider value={{ lookUpData: sampleLookupData }}>
-      <New />
-    </LookupDataContext.Provider>
   );
 }
