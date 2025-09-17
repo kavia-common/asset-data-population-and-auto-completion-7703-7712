@@ -55,12 +55,60 @@ export default function New() {
       { "lookupSetName": "ASSET_STATUSES", "values": [ { "id": 4, "lookupValue": "Installed", "lookupDescription": "Installed", "parentLookupValue": null, "lookupOrder": 2 }, { "id": 5, "lookupValue": "Obsolete", "lookupDescription": "Obsolete", "parentLookupValue": null, "lookupOrder": 3 }, { "id": 9588, "lookupValue": "TESTU", "lookupDescription": "84A212951WMP1", "parentLookupValue": null, "lookupOrder": 2 }, { "id": 3, "lookupValue": "To Be Installed", "lookupDescription": "To Be Installed", "parentLookupValue": null, "lookupOrder": 1 } ] },
       { "lookupSetName": "ANTENNA_MANUFACTURERS", "values": [ { "id": 5200, "lookupValue": "CTI", "lookupDescription": "CTI", "parentLookupValue": null, "lookupOrder": 6 }, { "id": 5060, "lookupValue": "General Electric", "lookupDescription": "General Electric", "parentLookupValue": null, "lookupOrder": 2 }, { "id": 9193, "lookupValue": "Generic", "lookupDescription": "Generic", "parentLookupValue": null, "lookupOrder": 7 }, { "id": 1153, "lookupValue": "No Antenna", "lookupDescription": "No Antenna", "parentLookupValue": null, "lookupOrder": 3 }, { "id": 5162, "lookupValue": "Sierra Wireless", "lookupDescription": "Sierra Wireless", "parentLookupValue": null, "lookupOrder": 5 }, { "id": 5000, "lookupValue": "Wired Matrix", "lookupDescription": "WiredMatrix", "parentLookupValue": null, "lookupOrder": 4 }, { "id": 34, "lookupValue": "Wireless Matrix", "lookupDescription": "Wireless Matrix", "parentLookupValue": null, "lookupOrder": 1 } ] },
       { "lookupSetName": "ANTENNA_MODELS", "values": [ { "id": 5202, "lookupValue": "GE PTC", "lookupDescription": "GE PTC", "parentLookupValue": 5060, "lookupOrder": 6 }, { "id": 1168, "lookupValue": "MARX-C1", "lookupDescription": "MARX-C1", "parentLookupValue": 5060, "lookupOrder": 3 }, { "id": 35, "lookupValue": "MBS2-LPR", "lookupDescription": "MBS2-LPR", "parentLookupValue": 34, "lookupOrder": 1 }, { "id": 5201, "lookupValue": "REX", "lookupDescription": "REX", "parentLookupValue": 5200, "lookupOrder": 5 }, { "id": 6340, "lookupValue": "REX-OBN", "lookupDescription": "REX with Mobile IP", "parentLookupValue": 5200, "lookupOrder": 8 }, { "id": 5163, "lookupValue": "Raven-X", "lookupDescription": "Raven-X", "parentLookupValue": 5162, "lookupOrder": 4 }, { "id": 9194, "lookupValue": "Server Ping Antenna", "lookupDescription": "Server Ping Antena", "parentLookupValue": 9193, "lookupOrder": 7 }, { "id": 5061, "lookupValue": "WMP1", "lookupDescription": "84A212951WMP1", "parentLookupValue": 5060, "lookupOrder": 2 }, { "id": 9584, "lookupValue": "WMP20", "lookupDescription": "84A212951WMP1", "parentLookupValue": 5060, "lookupOrder": 2 } ] },
-      { "lookupSetName": "ASSET_DEVICES", "values": [
-        { "id": 1, "lookupValue": "GPS", "lookupDescription": "GPS" },
-        { "id": 2, "lookupValue": "Cellular", "lookupDescription": "Cellular" },
-        { "id": 3, "lookupValue": "WiFi", "lookupDescription": "WiFi" },
-        { "id": 4, "lookupValue": "RFID", "lookupDescription": "RFID" }
-      ] }
+      {
+        "lookupSetName": "ASSET_DEVICES",
+        "values": [
+            {
+                "id": 9082,
+                "lookupValue": "CMU",
+                "lookupDescription": "CMU",
+                "parentLookupValue": null,
+                "lookupOrder": 1
+            },
+            {
+                "id": 9084,
+                "lookupValue": "LCV",
+                "lookupDescription": "LOCOVISION",
+                "parentLookupValue": null,
+                "lookupOrder": 2
+            },
+            {
+                "id": 9083,
+                "lookupValue": "HPEAP",
+                "lookupDescription": "HPEAP",
+                "parentLookupValue": null,
+                "lookupOrder": 3
+            },
+            {
+                "id": 9373,
+                "lookupValue": "eHPLIG",
+                "lookupDescription": "eHPLIG",
+                "parentLookupValue": null,
+                "lookupOrder": 4
+            },
+            {
+                "id": 9516,
+                "lookupValue": "EM1900",
+                "lookupDescription": "EM1900",
+                "parentLookupValue": null,
+                "lookupOrder": 5
+            },
+            {
+                "id": 9379,
+                "lookupValue": "EMCard",
+                "lookupDescription": "EMCARD",
+                "parentLookupValue": null,
+                "lookupOrder": 6
+            },
+            {
+                "id": 9627,
+                "lookupValue": "Test",
+                "lookupDescription": "Test",
+                "parentLookupValue": null,
+                "lookupOrder": 7
+            }
+        ]
+    },
     ],
     []
   );
