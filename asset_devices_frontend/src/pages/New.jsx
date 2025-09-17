@@ -232,8 +232,12 @@ export default function New() {
     });
     setDeviceFields((prev) => {
       const next = { ...prev };
+      // derive "To Be Installed" from ASSET_STATUSES if present
+      const tbi =
+        (statusOptions || []).find((s) => s.lookupValue === 'To Be Installed')
+          ?.lookupValue || 'To Be Installed';
       deviceNames.forEach((name) => {
-        if (!next[name]) next[name] = { status: '', antennaMfg: '', antennaModel: '' };
+        if (!next[name]) next[name] = { status: tbi, antennaMfg: '', antennaModel: '' };
       });
       return next;
     });
@@ -253,12 +257,9 @@ export default function New() {
     setDeviceEnabled((prev) => ({ ...prev, [deviceName]: checked }));
   };
 
-  const onStatusChange = (deviceName) => (e) => {
-    const value = e.target.value;
-    setDeviceFields((prev) => ({
-      ...prev,
-      [deviceName]: { ...prev[deviceName], status: value },
-    }));
+  // Status is read-only in UI; keep handler for completeness but it won't be used.
+  const onStatusChange = (deviceName) => (_e) => {
+    // No-op since Status is disabled. Kept for potential future use.
   };
 
   const onAntennaMfgChange = (deviceName) => (e) => {
@@ -285,6 +286,12 @@ export default function New() {
     });
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [antennaModels, antennaMfgs]);
+
+  // Ensure any downstream data consumers receive a normalized default status
+  useEffect(() => {
+    // no-op here in this minimal sandbox; in the full app this would push to context
+    // Left intentionally minimal to avoid side effects in this template
+  }, [deviceFields, deviceEnabled]);
 
   return (
     <div className="page-container">
@@ -328,10 +335,15 @@ export default function New() {
                     <label htmlFor={`${deviceName}-status`}>Status</label>
                     <SimpleSelect
                       id={`${deviceName}-status`}
-                      value={fields.status}
+                      value={
+                        fields.status ||
+                        ((statusOptions || []).find(
+                          (s) => s.lookupValue === 'To Be Installed'
+                        )?.lookupValue || 'To Be Installed')
+                      }
                       onChange={onStatusChange(deviceName)}
                       options={statusOptions}
-                      disabled={!enabled}
+                      disabled={true}
                       placeholder={''}
                       className="input"
                     />
